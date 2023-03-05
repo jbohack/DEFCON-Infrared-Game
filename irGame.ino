@@ -49,7 +49,7 @@ void loop() {
     Serial.println(decodedData);
     if (decodedData == 496348928) {
       if (hp > 0) {
-        hp--;
+        hp -= 2;
       }
       updateDisplay();
     } else {
