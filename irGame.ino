@@ -80,17 +80,21 @@ void updateDisplay() {
 void displayGameOver() {
   static unsigned long lastBlinkTime = 0;
   static bool displayText = true;
+  int16_t x, y;
+  uint16_t w, h;
   while(gameOver) {
     if (millis() - lastBlinkTime > 500) {
       lastBlinkTime = millis();
       display.clearDisplay();
       if (displayText) {
         display.setTextSize(2);
-        display.setCursor(0, 0);
+        display.getTextBounds("GAME OVER", 0, 0, &x, &y, &w, &h);
+        display.setCursor((SCREEN_WIDTH - w)/2, (SCREEN_HEIGHT - h)/2 - h + 8);
         display.println("GAME OVER");
       }
       display.setTextSize(1);
-      display.setCursor(0, 20);
+      display.getTextBounds("Reset?", 0, 0, &x, &y, &w, &h);
+      display.setCursor((SCREEN_WIDTH - w)/2, (SCREEN_HEIGHT - h)/2 + 8);
       display.println("Reset?");
       display.display();
       displayText = !displayText;
@@ -105,7 +109,9 @@ void displayGameOver() {
   }
 }
 
+
 void waitReset() {
   display.setCursor(25, 10);
   display.display();
 }
+
