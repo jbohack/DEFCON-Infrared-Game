@@ -26,15 +26,16 @@ void setup() {
   display.begin(SSD1306_SWITCHCAPVCC, SCREEN_ADDRESS);
   display.setTextSize(2);
   display.setTextColor(WHITE);
-  display.setCursor(0,0);
   display.clearDisplay();
-  display.print("HP: ");
+  display.setCursor(0, 0);
+  display.println("HP:");
+  display.setCursor((SCREEN_WIDTH - (display.getCursorX()))/2, 10);
   display.print(hp);
   display.display();
   IrReceiver.begin(IR_RECEIVE_PIN);
   IrSender.begin(IR_SEND_PIN);
   pinMode(buttonPin, INPUT);
-  digitalWrite(buttonPin,HIGH);
+  digitalWrite(buttonPin, HIGH);
 }
 
 void loop() {
@@ -46,44 +47,47 @@ void loop() {
   if (IrReceiver.decode()) {
     Serial.println(IrReceiver.decodedIRData.decodedRawData);
     if (IrReceiver.decodedIRData.decodedRawData == 496348928) {
-      if (hp <= 0) {
-        display.clearDisplay();
-        display.setCursor(0, 0);
-        display.println("GAME OVER");
-        display.display();
-        while (true) {
-          // wait for a reset
-          buttonState = digitalRead(buttonPin);
-          if (buttonState == ACTIVATED) {
-            hp = 100;
-            display.clearDisplay();
-            display.setCursor(0, 0);
-            display.print("HP: ");
-            display.print(hp);
-            display.display();
-            break;
-          }
-          display.clearDisplay();
-          display.setCursor(0, 0);
-          display.println("GAME OVER");
-          display.display();
-          delay(500);
-          display.clearDisplay();
-          display.display();
-          delay(500);
-        }
-      } else {
+      if (hp > 0) {
         hp--;
-        display.clearDisplay();
-        display.setCursor(0, 0);
-        display.print("HP: ");
-        display.print(hp);
-        display.display();
       }
-    } else{
+      display.clearDisplay();
+      display.setCursor(0, 0);
+      display.println("HP:");
+      display.setCursor((SCREEN_WIDTH - (display.getCursorX()))/2, 10);
+      display.print(hp);
+      display.display();
+    } else {
       Serial.println(IrReceiver.decodedIRData.decodedRawData);
     }
-    display.clearDisplay();
     IrReceiver.resume();
+  }
+  
+  if (hp <= 0) {
+    display.clearDisplay();
+    display.setCursor(0, 0);
+    display.println("GAME OVER");
+    display.display();
+    while (true) {
+      // wait for a reset
+      buttonState = digitalRead(buttonPin);
+      if (buttonState == ACTIVATED) {
+        hp = 100;
+        display.clearDisplay();
+        display.setCursor(0, 0);
+        display.println("HP:");
+        display.setCursor((SCREEN_WIDTH - (display.getCursorX()))/2, 10);
+        display.print(hp);
+        display.display();
+        break;
+      }
+      display.clearDisplay();
+      display.setCursor(0, 0);
+      display.println("GAME OVER");
+      display.display();
+      delay(500);
+      display.clearDisplay();
+      display.display();
+      delay(500);
+    }
   }
 }
