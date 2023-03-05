@@ -80,30 +80,32 @@ void updateDisplay() {
 void displayGameOver() {
   static unsigned long lastBlinkTime = 0;
   static bool displayText = true;
-  if (millis() - lastBlinkTime > 500) {
-    lastBlinkTime = millis();
-    display.clearDisplay();
-    if (displayText) {
-      display.setTextSize(2);
-      display.setCursor(0, 0);
-      display.println("GAME OVER");
+  while(gameOver) {
+    if (millis() - lastBlinkTime > 500) {
+      lastBlinkTime = millis();
+      display.clearDisplay();
+      if (displayText) {
+        display.setTextSize(2);
+        display.setCursor(0, 0);
+        display.println("GAME OVER");
+      }
+      display.setTextSize(1);
+      display.setCursor(0, 20);
+      display.println("Reset?");
+      display.display();
+      displayText = !displayText;
     }
-    display.setTextSize(1);
-    display.setCursor(0, 20);
-    display.println("Reset?");
-    display.display();
-    displayText = !displayText;
+    buttonState = digitalRead(buttonPin);
+    if (buttonState == ACTIVATED) {
+      hp = 100;
+      gameOver = false;
+      display.setTextSize(2);
+      updateDisplay();
+    }
   }
 }
 
 void waitReset() {
   display.setCursor(25, 10);
   display.display();
-  buttonState = digitalRead(buttonPin);
-  if (buttonState == ACTIVATED) {
-    hp = 100;
-    gameOver = false;
-    display.setTextSize(2);
-    updateDisplay();
-  }
 }
