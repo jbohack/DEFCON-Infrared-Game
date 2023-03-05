@@ -93,9 +93,9 @@ void displayGameOver() {
         display.println("GAME OVER");
       }
       display.setTextSize(1);
-      display.getTextBounds("Reset?", 0, 0, &x, &y, &w, &h);
-      display.setCursor((SCREEN_WIDTH - w)/2, (SCREEN_HEIGHT - h)/2 + 8);
-      display.println("Reset?");
+      display.getTextBounds("Press button to reset", 0, 0, &x, &y, &w, &h);
+      display.setCursor((SCREEN_WIDTH - w)/2, (SCREEN_HEIGHT - h)/2 + 12);
+      display.println("Press button to reset");
       display.display();
       displayText = !displayText;
     }
@@ -109,9 +109,7 @@ void displayGameOver() {
   }
 }
 
-
 void waitReset() {
   display.setCursor(25, 10);
   display.display();
 }
-
