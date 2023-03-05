@@ -35,8 +35,7 @@ void setup() {
   display.display();
   IrReceiver.begin(IR_RECEIVE_PIN);
   IrSender.begin(IR_SEND_PIN);
-  pinMode(buttonPin, INPUT);
-  digitalWrite(buttonPin, HIGH);
+  pinMode(buttonPin, INPUT_PULLUP);
 }
 
 void loop() {
@@ -46,60 +45,65 @@ void loop() {
     delay(100);
   }
   if (IrReceiver.decode()) {
-    Serial.println(IrReceiver.decodedIRData.decodedRawData);
-    if (IrReceiver.decodedIRData.decodedRawData == 496348928) {
+    uint32_t decodedData = IrReceiver.decodedIRData.decodedRawData;
+    Serial.println(decodedData);
+    if (decodedData == 496348928) {
       if (hp > 0) {
         hp--;
       }
-      display.clearDisplay();
-      display.setCursor(0, 0);
-      display.println("HP:");
-      display.setCursor((SCREEN_WIDTH - (display.getCursorX()))/2, 10);
-      display.print(hp);
-      display.display();
+      updateDisplay();
     } else {
-      Serial.println(IrReceiver.decodedIRData.decodedRawData);
+      Serial.println(decodedData);
     }
     IrReceiver.resume();
   }
   
   if (hp <= 0 && !gameOver) {
     gameOver = true;
+    displayGameOver();
   }
   
   if (gameOver) {
-    // Blink "GAME OVER" text
-    static unsigned long lastBlinkTime = 0;
-    static bool displayText = true;
-    if (millis() - lastBlinkTime > 500) {
-      lastBlinkTime = millis();
-      display.clearDisplay();
-      if (displayText) {
-        display.setTextSize(2);
-        display.setCursor(0, 0);
-        display.println("GAME OVER");
-      }
-      display.setTextSize(1);
-      display.setCursor(0, 20);
-      display.println("Reset?");
-      display.display();
-      displayText = !displayText;
-    }
-    
-    // Wait for a reset
-    display.setCursor(25, 10);
-    display.display();
-    buttonState = digitalRead(buttonPin);
-    if (buttonState == ACTIVATED) {
-      hp = 100;
-      gameOver = false;
+    waitReset();
+  }
+}
+
+void updateDisplay() {
+  display.clearDisplay();
+  display.setCursor(0, 0);
+  display.println("HP:");
+  display.setCursor((SCREEN_WIDTH - (display.getCursorX()))/2, 10);
+  display.print(hp);
+  display.display();
+}
+
+void displayGameOver() {
+  static unsigned long lastBlinkTime = 0;
+  static bool displayText = true;
+  if (millis() - lastBlinkTime > 500) {
+    lastBlinkTime = millis();
+    display.clearDisplay();
+    if (displayText) {
       display.setTextSize(2);
-      display.clearDisplay();
       display.setCursor(0, 0);
-      display.println("HP:");
-      display.setCursor((SCREEN_WIDTH - (display.getCursorX()))/2, 10);
-      display.print(hp);
-      display.display();
+      display.println("GAME OVER");
     }
+    display.setTextSize(1);
+    display.setCursor(0, 20);
+    display.println("Reset?");
+    display.display();
+    displayText = !displayText;
+  }
+}
+
+void waitReset() {
+  display.setCursor(25, 10);
+  display.display();
+  buttonState = digitalRead(buttonPin);
+  if (buttonState == ACTIVATED) {
+    hp = 100;
+    gameOver = false;
+    display.setTextSize(2);
+    updateDisplay();
   }
 }
