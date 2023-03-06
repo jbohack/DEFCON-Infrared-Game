@@ -38,9 +38,13 @@ void setup() {
   pinMode(buttonPin, INPUT_PULLUP);
 }
 
+#define TIMEOUT 5000
+unsigned long lastReceiveTime = 0;
+
 void loop() {
   buttonState = digitalRead(buttonPin);
   if (buttonState == ACTIVATED) {
+    lastReceiveTime = millis();
     IrSender.sendNEC(data, len);
     unsigned long delayStart = millis();
     while (millis() - delayStart < 10) {
@@ -49,28 +53,30 @@ void loop() {
   } else {
     updateDisplay();
   }
-  
+
   if (IrReceiver.decode()) {
     uint32_t decodedData = IrReceiver.decodedIRData.decodedRawData;
-    Serial.println(decodedData);
-  if (decodedData == 496348928 && buttonState != ACTIVATED) {
-    if (hp > 0) {
+    if (decodedData == 496348928 && buttonState != ACTIVATED && hp > 0) {
       hp -= 2;
-    }
-    updateDisplay();
-  } else {
-      Serial.println(decodedData);
+      updateDisplay();
+      lastReceiveTime = millis();
     }
     IrReceiver.resume();
   }
-  
+
   if (hp <= 0 && !gameOver) {
     gameOver = true;
     displayGameOver();
   }
-  
+
   if (gameOver) {
     waitReset();
+  }
+
+  if (millis() - lastReceiveTime > TIMEOUT) {
+    display.ssd1306_command(SSD1306_DISPLAYOFF);
+  } else {
+    display.ssd1306_command(SSD1306_DISPLAYON);
   }
 }
 
