@@ -47,12 +47,12 @@ void loop() {
   if (IrReceiver.decode()) {
     uint32_t decodedData = IrReceiver.decodedIRData.decodedRawData;
     Serial.println(decodedData);
-    if (decodedData == 496348928) {
-      if (hp > 0) {
-        hp -= 2;
-      }
-      updateDisplay();
-    } else {
+  if (decodedData == 496348928 && buttonState != ACTIVATED) {
+    if (hp > 0) {
+      hp -= 2;
+    }
+    updateDisplay();
+  } else {
       Serial.println(decodedData);
     }
     IrReceiver.resume();
