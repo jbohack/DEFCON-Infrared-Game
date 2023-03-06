@@ -42,7 +42,9 @@ void loop() {
   buttonState = digitalRead(buttonPin);
   if (buttonState == ACTIVATED) {
     IrSender.sendNEC(data, len);
-    delay(10);
+    unsigned long delayStart = millis();
+    while (millis() - delayStart < 10) {
+    }
   }
   if (IrReceiver.decode()) {
     uint32_t decodedData = IrReceiver.decodedIRData.decodedRawData;
