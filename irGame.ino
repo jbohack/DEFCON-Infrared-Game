@@ -53,7 +53,9 @@ void loop() {
       displayInvulnerable();
     }
   } else {
-    updateDisplay();
+    if (millis() - lastReceiveTime < TIMEOUT) {
+      updateDisplay();
+    }
   }
 
   if (IrReceiver.decode()) {
