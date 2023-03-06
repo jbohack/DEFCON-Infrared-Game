@@ -11,6 +11,8 @@ int buttonState = 0;
 #define IR_RECEIVE_PIN 8
 #define IR_SEND_PIN 6
 
+#define TIMEOUT 5000
+
 #define SCREEN_WIDTH 128
 #define SCREEN_HEIGHT 32
 #define SCREEN_ADDRESS 0x3C
@@ -22,26 +24,28 @@ uint8_t len = 32;
 
 int hp = 100;
 bool gameOver = false;
+int32_t lastReceiveTime = 0;
+const int32_t receiveDelay = 250;
 
-void setup() {
-  Serial.begin(9600);
-  display.begin(SSD1306_SWITCHCAPVCC, SCREEN_ADDRESS);
+void updateDisplay() {
   display.setTextSize(2);
-  display.setTextColor(WHITE);
   display.clearDisplay();
   display.setCursor(0, 0);
   display.println("HP:");
   display.setCursor((SCREEN_WIDTH - (display.getCursorX()))/2, 10);
   display.print(hp);
   display.display();
+}
+
+void setup() {
+  Serial.begin(9600);
+  display.begin(SSD1306_SWITCHCAPVCC, SCREEN_ADDRESS);
+  display.setTextColor(WHITE);
+  updateDisplay();
   IrReceiver.begin(IR_RECEIVE_PIN);
   IrSender.begin(IR_SEND_PIN);
   pinMode(buttonPin, INPUT_PULLUP);
 }
-
-#define TIMEOUT 5000
-int32_t lastReceiveTime = 0;
-const int32_t receiveDelay = 250;
 
 void loop() {
   buttonState = digitalRead(buttonPin);
@@ -88,15 +92,6 @@ void loop() {
   }
 }
 
-void updateDisplay() {
-  display.setTextSize(2);
-  display.clearDisplay();
-  display.setCursor(0, 0);
-  display.println("HP:");
-  display.setCursor((SCREEN_WIDTH - (display.getCursorX()))/2, 10);
-  display.print(hp);
-  display.display();
-}
 
 void displayInvulnerable() {
   int16_t x, y;
