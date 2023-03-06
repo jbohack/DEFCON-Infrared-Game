@@ -140,6 +140,7 @@ void displayGameOver() {
       gameOver = false;
       display.setTextSize(2);
       updateDisplay();
+      delay(1000);
     }
   }
 }
