@@ -41,6 +41,7 @@ void setup() {
 
 #define TIMEOUT 5000
 int32_t lastReceiveTime = 0;
+const int32_t receiveDelay = 250;
 
 void loop() {
   buttonState = digitalRead(buttonPin);
@@ -57,10 +58,12 @@ void loop() {
 
   if (IrReceiver.decode()) {
     uint32_t decodedData = IrReceiver.decodedIRData.decodedRawData;
-    if (decodedData == 496348928 && buttonState != ACTIVATED && hp > 0) {
+    int32_t currentTime = millis();
+    if (decodedData == 496348928 && buttonState != ACTIVATED && hp > 0 && 
+        currentTime - lastReceiveTime >= receiveDelay) {
       hp -= 2;
       updateDisplay();
-      lastReceiveTime = millis();
+      lastReceiveTime = currentTime;
     }
     IrReceiver.resume();
   }
