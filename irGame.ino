@@ -3,6 +3,7 @@
 #include <Adafruit_GFX.h>
 #include <Adafruit_SSD1306.h>
 #include <IRremote.h>
+#include <avr/sleep.h>
 
 #define ACTIVATED LOW
 const int buttonPin = 3;
@@ -75,6 +76,8 @@ void loop() {
 
   if (millis() - lastReceiveTime > TIMEOUT) {
     display.ssd1306_command(SSD1306_DISPLAYOFF);
+    set_sleep_mode(SLEEP_MODE_IDLE);
+    sleep_mode();
   } else {
     display.ssd1306_command(SSD1306_DISPLAYON);
   }
