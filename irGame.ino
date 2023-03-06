@@ -40,14 +40,14 @@ void setup() {
 }
 
 #define TIMEOUT 5000
-unsigned long lastReceiveTime = 0;
+int32_t lastReceiveTime = 0;
 
 void loop() {
   buttonState = digitalRead(buttonPin);
   if (buttonState == ACTIVATED) {
     lastReceiveTime = millis();
     IrSender.sendNEC(data, len);
-    unsigned long delayStart = millis();
+    int32_t delayStart = millis();
     while (millis() - delayStart < 10) {
       displayInvulnerable();
     }
@@ -108,7 +108,7 @@ void displayInvulnerable() {
 }
 
 void displayGameOver() {
-  static unsigned long lastBlinkTime = 0;
+  static int32_t lastBlinkTime = 0;
   static bool displayText = true;
   int16_t x, y;
   uint16_t w, h;
