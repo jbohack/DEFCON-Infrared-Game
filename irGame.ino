@@ -44,8 +44,12 @@ void loop() {
     IrSender.sendNEC(data, len);
     unsigned long delayStart = millis();
     while (millis() - delayStart < 10) {
+      displayInvulnerable();
     }
+  } else {
+    updateDisplay();
   }
+  
   if (IrReceiver.decode()) {
     uint32_t decodedData = IrReceiver.decodedIRData.decodedRawData;
     Serial.println(decodedData);
@@ -71,11 +75,26 @@ void loop() {
 }
 
 void updateDisplay() {
+  display.setTextSize(2);
   display.clearDisplay();
   display.setCursor(0, 0);
   display.println("HP:");
   display.setCursor((SCREEN_WIDTH - (display.getCursorX()))/2, 10);
   display.print(hp);
+  display.display();
+}
+
+void displayInvulnerable() {
+  int16_t x, y;
+  uint16_t w, h;
+  display.clearDisplay();
+  display.setTextSize(2);
+  display.getTextBounds("Damage", 0, 0, &x, &y, &w, &h);
+  display.setCursor((SCREEN_WIDTH - w)/2, (SCREEN_HEIGHT - h)/2 - h + 8);
+  display.println("Damage");
+  display.getTextBounds("Immunity", 0, 0, &x, &y, &w, &h);
+  display.setCursor((SCREEN_WIDTH - w)/2, (SCREEN_HEIGHT - h)/2 + 9);
+  display.println("Immunity");
   display.display();
 }
 
