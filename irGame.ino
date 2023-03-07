@@ -42,13 +42,20 @@ void updateDisplay() {
   int16_t x, y;
   uint16_t w, h;
   display.getTextBounds("HP: ", 0, 0, &x, &y, &w, &h);
-  display.setCursor((SCREEN_WIDTH - w)/2 - 10, (SCREEN_HEIGHT - h)/2);
+  
+  int digitLength = strlen(String(hp).c_str());
+  int valueWidth = digitLength * 14;
+  
+  int hpTextX = (SCREEN_WIDTH - w - valueWidth) / 2;
+  int hpValueX = hpTextX + w;
+  
+  display.setCursor(hpTextX, (SCREEN_HEIGHT - h) / 2);
   display.print("HP: ");
-  display.getTextBounds(String(hp).c_str(), 0, 0, &x, &y, &w, &h);
-  display.setCursor((SCREEN_WIDTH - w)/2 + 15, (SCREEN_HEIGHT - h)/2);
+  display.setCursor(hpValueX, (SCREEN_HEIGHT - h) / 2);
   display.print(hp);
   display.display();
 }
+
 
 void setup() {
   Serial.begin(9600);
