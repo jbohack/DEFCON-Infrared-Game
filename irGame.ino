@@ -28,11 +28,24 @@ int32_t lastReceiveTime = 0;
 const int32_t receiveDelay = 250;
 
 void updateDisplay() {
-  display.setTextSize(2);
   display.clearDisplay();
-  display.setCursor(0, 0);
-  display.println("HP:");
-  display.setCursor((SCREEN_WIDTH - (display.getCursorX()))/2, 10);
+  display.setTextSize(1);
+
+  for (int i = 0; i < SCREEN_WIDTH; i += 8) {
+    display.setCursor(i, 0);
+    display.write(0x03);
+    display.setCursor(i, SCREEN_HEIGHT - 8);
+    display.write(0x03);
+  }
+  
+  display.setTextSize(2);
+  int16_t x, y;
+  uint16_t w, h;
+  display.getTextBounds("HP: ", 0, 0, &x, &y, &w, &h);
+  display.setCursor((SCREEN_WIDTH - w)/2 - 10, (SCREEN_HEIGHT - h)/2);
+  display.print("HP: ");
+  display.getTextBounds(String(hp).c_str(), 0, 0, &x, &y, &w, &h);
+  display.setCursor((SCREEN_WIDTH - w)/2 + 15, (SCREEN_HEIGHT - h)/2);
   display.print(hp);
   display.display();
 }
