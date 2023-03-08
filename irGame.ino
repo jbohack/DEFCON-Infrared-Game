@@ -29,29 +29,24 @@ const int32_t receiveDelay = 250;
 
 void updateDisplay() {
   display.clearDisplay();
-  display.setTextSize(1);
 
-  for (int i = 0; i < SCREEN_WIDTH; i += 8) {
-    display.setCursor(i, 0);
-    display.write(0x03);
-    display.setCursor(i, SCREEN_HEIGHT - 8);
-    display.write(0x03);
+  float size = 24.0f * ((int)((hp + 9) / 10) * 0.1f);
+  
+  int centerX = SCREEN_WIDTH - 16;
+  int centerY = 16;
+  for (float angle = 0.0f; angle <= 360.0f; angle += 0.5f) {
+    float radian = angle * PI / 180.0f;
+    float x = 16.0f * pow(sin(radian), 3.0f);
+    float y = -1 * (13.0f * cos(radian) - 5.0f * cos(2 * radian) - 2.0f * cos(3 * radian) - cos(4 * radian));
+    x *= size / 24.0f;
+    y *= size / 24.0f;
+    display.drawPixel(centerX + x, centerY + y, WHITE);
   }
-  
-  display.setTextSize(2);
-  int16_t x, y;
-  uint16_t w, h;
-  display.getTextBounds("HP: ", 0, 0, &x, &y, &w, &h);
-  
-  int digitLength = strlen(String(hp).c_str());
-  int valueWidth = digitLength * 14;
-  
-  int hpTextX = (SCREEN_WIDTH - w - valueWidth) / 2;
-  int hpValueX = hpTextX + w;
-  
-  display.setCursor(hpTextX, (SCREEN_HEIGHT - h) / 2);
+
+  display.setCursor(0, 0);
+  display.setTextSize(1);
+  display.setTextColor(WHITE);
   display.print("HP: ");
-  display.setCursor(hpValueX, (SCREEN_HEIGHT - h) / 2);
   display.print(hp);
   display.display();
 }
