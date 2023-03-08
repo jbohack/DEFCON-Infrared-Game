@@ -32,8 +32,8 @@ void updateDisplay() {
 
   float size = 24.0f * ((int)((hp + 9) / 10) * 0.1f);
   
-  int centerX = SCREEN_WIDTH - 16;
-  int centerY = 16;
+  int centerX = SCREEN_WIDTH / 2;
+  int centerY = SCREEN_HEIGHT / 2;
   for (float angle = 0.0f; angle <= 360.0f; angle += 0.5f) {
     float radian = angle * PI / 180.0f;
     float x = 16.0f * pow(sin(radian), 3.0f);
