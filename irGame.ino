@@ -82,7 +82,7 @@ void loop() {
     int32_t currentTime = millis();
     if (decodedData == 496348928 && buttonState != ACTIVATED && hp > 0 && 
         currentTime - lastReceiveTime >= receiveDelay) {
-      hp -= 2;
+      hp -= 10;
       updateDisplay();
       lastReceiveTime = currentTime;
     }
