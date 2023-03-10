@@ -19,7 +19,8 @@ int buttonState = 0;
 #define OLED_RESET -1
 Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET);
 
-uint32_t data = 0xF5A9B8;
+uint32_t hitCode = 0xF5A9B8;
+uint32_t regenCode = 0x55CDFC;
 uint8_t len = 32;
 
 int hp = 100;
@@ -78,7 +79,7 @@ void loop() {
   buttonState = digitalRead(buttonPin);
   if (buttonState == ACTIVATED) {
     lastReceiveTime = millis();
-    IrSender.sendNEC(data, len);
+    IrSender.sendNEC(hitCode, len);
     int32_t delayStart = millis();
     while (millis() - delayStart < 10) {
       displayInvulnerable();
@@ -99,8 +100,15 @@ void loop() {
       updateDisplay();
       lastReceiveTime = currentTime;
     }
+    if (decodedData == 1068739072 && hp > 0 && 
+        currentTime - lastReceiveTime >= receiveDelay) {
+      hp = 100;
+      updateDisplay();
+      lastReceiveTime = currentTime;
+    }
     IrReceiver.resume();
   }
+
 
   if (hp <= 0 && !gameOver) {
     gameOver = true;
@@ -163,6 +171,11 @@ void displayGameOver() {
       gameOver = false;
       display.setTextSize(2);
       updateDisplay();
+      IrSender.sendNEC(regenCode, len);
+      delay(1000);
+      IrSender.sendNEC(regenCode, len);
+      delay(1000);
+      IrSender.sendNEC(regenCode, len);
       delay(1000);
     }
   }
