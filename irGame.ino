@@ -65,6 +65,7 @@ void updateDisplay() {
 
 void setup() {
   Serial.begin(9600);
+  Serial.print("Check out the GitHub to view updates or contribute!\nhttps://github.com/jbohack/DEFCON-Infrared-Game\n");
   display.begin(SSD1306_SWITCHCAPVCC, SCREEN_ADDRESS);
   display.setTextColor(WHITE);
   updateDisplay();
