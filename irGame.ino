@@ -118,10 +118,6 @@ void loop() {
     displayGameOver();
   }
 
-  if (gameOver) {
-    waitReset();
-  }
-
   if (millis() - lastReceiveTime > TIMEOUT) {
     display.ssd1306_command(SSD1306_DISPLAYOFF);
     set_sleep_mode(SLEEP_MODE_IDLE);
@@ -130,7 +126,6 @@ void loop() {
     display.ssd1306_command(SSD1306_DISPLAYON);
   }
 }
-
 
 void displayInvulnerable() {
   int16_t x, y;
@@ -189,9 +184,4 @@ void displayGameOver() {
       firstIR = false;
     }
   }
-}
-
-void waitReset() {
-  display.setCursor(25, 10);
-  display.display();
 }
