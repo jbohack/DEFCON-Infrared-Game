@@ -19,8 +19,9 @@ int buttonState = 0;
 #define OLED_RESET -1
 Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET);
 
-uint32_t hitCode = 0xF5A9B8;
 uint32_t regenCode = 0x55CDFC;
+uint32_t hitCode = 0xF5A9B8;
+uint32_t reviveCode = 0xFFFFFF;
 uint8_t len = 32;
 
 int hp = 100;
@@ -151,6 +152,12 @@ void displayGameOver() {
   int16_t x, y;
   uint16_t w, h;
   while(gameOver) {
+    uint32_t decodedData = 0;
+    if (IrReceiver.decode()) {
+      decodedData = IrReceiver.decodedIRData.decodedRawData;
+      Serial.println(decodedData);
+      IrReceiver.resume();
+    }
     if (millis() - lastBlinkTime > 500) {
       lastBlinkTime = millis();
       display.clearDisplay();
@@ -168,7 +175,7 @@ void displayGameOver() {
       displayText = !displayText;
     }
     buttonState = digitalRead(buttonPin);
-    if (buttonState == ACTIVATED) {
+    if (buttonState == ACTIVATED || decodedData == 4294967040) {
       hp = 100;
       gameOver = false;
       display.setTextSize(2);
