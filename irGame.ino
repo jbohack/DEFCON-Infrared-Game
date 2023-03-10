@@ -25,7 +25,6 @@ uint32_t reviveCode = 0xFFFFFF;
 uint8_t len = 32;
 
 int hp = 100;
-bool firstIR = false;
 bool gameOver = false;
 int32_t lastReceiveTime = 0;
 const int32_t receiveDelay = 250;
@@ -97,7 +96,7 @@ void loop() {
     int32_t currentTime = millis();
     Serial.println(decodedData);
     if (decodedData == 496348928 && buttonState != ACTIVATED && hp > 0 && 
-        currentTime - lastReceiveTime >= receiveDelay && firstIR) {
+        currentTime - lastReceiveTime >= receiveDelay) {
       hp -= 10;
       updateDisplay();
       lastReceiveTime = currentTime;
@@ -108,9 +107,6 @@ void loop() {
       lastReceiveTime = currentTime;
     }
     IrReceiver.resume();
-    if (!firstIR) {
-      firstIR = true;
-    }
   }
 
   if (hp <= 0 && !gameOver) {
@@ -181,7 +177,6 @@ void displayGameOver() {
       delay(1000);
       IrSender.sendNEC(regenCode, len);
       delay(1000);
-      firstIR = false;
     }
   }
 }
