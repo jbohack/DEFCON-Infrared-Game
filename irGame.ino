@@ -11,7 +11,7 @@ int buttonState = 0;
 #define IR_RECEIVE_PIN 8
 #define IR_SEND_PIN 6
 
-#define TIMEOUT 5000
+#define TIMEOUT 30000
 
 #define SCREEN_WIDTH 128
 #define SCREEN_HEIGHT 32
