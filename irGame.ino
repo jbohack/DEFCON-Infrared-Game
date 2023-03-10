@@ -29,28 +29,39 @@ const int32_t receiveDelay = 250;
 
 void updateDisplay() {
   display.clearDisplay();
-
-  float size = 24.0f * ((int)((hp + 9) / 10) * 0.1f);
-  
-  int centerX = SCREEN_WIDTH / 2;
-  int centerY = SCREEN_HEIGHT / 2;
-  for (float angle = 0.0f; angle <= 360.0f; angle += 0.5f) {
-    float radian = angle * PI / 180.0f;
-    float x = 16.0f * pow(sin(radian), 3.0f);
-    float y = -1 * (13.0f * cos(radian) - 5.0f * cos(2 * radian) - 2.0f * cos(3 * radian) - cos(4 * radian));
-    x *= size / 24.0f;
-    y *= size / 24.0f;
-    display.drawPixel(centerX + x, centerY + y, WHITE);
-  }
-
-  display.setCursor(0, 0);
   display.setTextSize(1);
-  display.setTextColor(WHITE);
-  display.print("HP: ");
+
+  int heartWidth = 8;
+  int heartSpacing = SCREEN_WIDTH - heartWidth * 2 - 4;
+  int heartY = (SCREEN_HEIGHT - 16) / 2;
+  display.setCursor(4, heartY);
+  display.setTextSize(2);
+  display.write(0x03);
+  display.setCursor(SCREEN_WIDTH - 12, heartY);
+  display.write(0x03);
+  
+  display.setTextSize(2);
+  int16_t x, y;
+  uint16_t w, h;
+  display.getTextBounds("HP:", 0, 0, &x, &y, &w, &h);
+  
+  int digitLength = strlen(String(hp).c_str());
+  int valueWidth = digitLength * 14;
+  int hpTextX = (heartSpacing - w - valueWidth) / 2 + heartWidth + 2;
+  int hpValueX = hpTextX + w;
+  
+  if (digitLength == 2) {
+    hpValueX += 2;
+  } else if (digitLength == 3) {
+    hpValueX += 6;
+  }
+  
+  display.setCursor(hpTextX, (SCREEN_HEIGHT - h) / 2);
+  display.print("HP:");
+  display.setCursor(hpValueX, (SCREEN_HEIGHT - h) / 2);
   display.print(hp);
   display.display();
 }
-
 
 void setup() {
   Serial.begin(9600);
