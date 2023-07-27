@@ -80,7 +80,7 @@ void loop() {
   buttonState = digitalRead(buttonPin);
   if (buttonState == ACTIVATED) {
     lastReceiveTime = millis();
-    IrSender.sendNEC(hitCode, len);
+    IrSender.sendNECMSB(hitCode, len);
     int32_t delayStart = millis();
     while (millis() - delayStart < 10) {
       displayInvulnerable();
@@ -171,11 +171,11 @@ void displayGameOver() {
       gameOver = false;
       display.setTextSize(2);
       updateDisplay();
-      IrSender.sendNEC(regenCode, len);
+      IrSender.sendNECMSB(regenCode, len);
       delay(1000);
-      IrSender.sendNEC(regenCode, len);
+      IrSender.sendNECMSB(regenCode, len);
       delay(1000);
-      IrSender.sendNEC(regenCode, len);
+      IrSender.sendNECMSB(regenCode, len);
       delay(1000);
     }
   }
