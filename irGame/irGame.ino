@@ -94,7 +94,7 @@ void loop() {
   if (IrReceiver.decode()) {
     uint32_t decodedData = IrReceiver.decodedIRData.decodedRawData;
     int32_t currentTime = millis();
-    Serial.println(decodedData);
+    //Serial.println(decodedData);
     if (decodedData == 496348928 && buttonState != ACTIVATED && hp > 0 && 
         currentTime - lastReceiveTime >= receiveDelay) {
       hp -= 10;
@@ -146,7 +146,7 @@ void displayGameOver() {
     uint32_t decodedData = 0;
     if (IrReceiver.decode()) {
       decodedData = IrReceiver.decodedIRData.decodedRawData;
-      Serial.println(decodedData);
+      //Serial.println(decodedData);
       IrReceiver.resume();
     }
     if (millis() - lastBlinkTime > 500) {
