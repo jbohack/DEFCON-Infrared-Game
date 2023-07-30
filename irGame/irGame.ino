@@ -11,7 +11,7 @@ int buttonState = 0;
 #define IR_RECEIVE_PIN 8
 #define IR_SEND_PIN 6
 
-#define TIMEOUT 30000
+#define TIMEOUT 60000
 
 #define SCREEN_WIDTH 128
 #define SCREEN_HEIGHT 32
@@ -27,6 +27,7 @@ uint8_t len = 32;
 int hp = 100;
 bool gameOver = false;
 int32_t lastReceiveTime = 0;
+int32_t gameOverStartTime = 0;
 const int32_t receiveDelay = 250;
 
 void updateDisplay() {
@@ -111,12 +112,14 @@ void loop() {
 
   if (hp <= 0 && !gameOver) {
     gameOver = true;
+    gameOverStartTime = millis();
     displayGameOver();
   }
 
   if (millis() - lastReceiveTime > TIMEOUT) {
     display.ssd1306_command(SSD1306_DISPLAYOFF);
-    set_sleep_mode(SLEEP_MODE_IDLE);
+    set_sleep_mode(SLEEP_MODE_PWR_SAVE);
+    sleep_enable();
     sleep_mode();
   } else {
     display.ssd1306_command(SSD1306_DISPLAYON);
@@ -142,7 +145,7 @@ void displayGameOver() {
   static bool displayText = true;
   int16_t x, y;
   uint16_t w, h;
-  while(gameOver) {
+  while (gameOver) {
     uint32_t decodedData = 0;
     if (IrReceiver.decode()) {
       decodedData = IrReceiver.decodedIRData.decodedRawData;
@@ -155,20 +158,29 @@ void displayGameOver() {
       if (displayText) {
         display.setTextSize(2);
         display.getTextBounds("GAME OVER", 0, 0, &x, &y, &w, &h);
-        display.setCursor((SCREEN_WIDTH - w)/2, (SCREEN_HEIGHT - h)/2 - h + 8);
+        display.setCursor((SCREEN_WIDTH - w) / 2, (SCREEN_HEIGHT - h) / 2 - h + 8);
         display.println("GAME OVER");
       }
       display.setTextSize(1);
       display.getTextBounds("Press button to reset", 0, 0, &x, &y, &w, &h);
-      display.setCursor((SCREEN_WIDTH - w)/2, (SCREEN_HEIGHT - h)/2 + 12);
+      display.setCursor((SCREEN_WIDTH - w) / 2, (SCREEN_HEIGHT - h) / 2 + 12);
       display.println("Press button to reset");
       display.display();
       displayText = !displayText;
     }
+
+    if (millis() - gameOverStartTime > TIMEOUT) {
+      display.ssd1306_command(SSD1306_DISPLAYOFF);
+      set_sleep_mode(SLEEP_MODE_PWR_SAVE);
+      sleep_enable();
+      sleep_mode();
+    }
+
     buttonState = digitalRead(buttonPin);
     if (buttonState == ACTIVATED || decodedData == 4294967040) {
       hp = 100;
       gameOver = false;
+      displayText = true;
       display.setTextSize(2);
       updateDisplay();
       IrSender.sendNECMSB(regenCode, len);
