@@ -76,7 +76,7 @@ void setup() {
   display.clearDisplay();
   display.setTextSize(2);
 
-  const char versionText[] = "V1.3";
+  const char versionText[] = "V1.4";
   int16_t versionWidth = strlen(versionText) * 12;
   int16_t versionX = (SCREEN_WIDTH - versionWidth) / 2;
   int16_t versionY = 4;
@@ -208,11 +208,11 @@ void displayGameOver() {
       display.ssd1306_command(SSD1306_DISPLAYON);
       updateDisplay();
       IrSender.sendNECMSB(regenCode, len);
-      delay(1000);
+      delay(250);
       IrSender.sendNECMSB(regenCode, len);
-      delay(1000);
+      delay(250);
       IrSender.sendNECMSB(regenCode, len);
-      delay(1000);
+      delay(250);
     }
   }
 }
