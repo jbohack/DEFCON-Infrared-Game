@@ -69,9 +69,32 @@ void updateDisplay() {
 void setup() {
   Serial.begin(9600);
   Serial.print("Check out the GitHub to view updates or contribute!\nhttps://github.com/jbohack/DEFCON-Infrared-Game\n");
+  
   display.begin(SSD1306_SWITCHCAPVCC, SCREEN_ADDRESS);
   display.setTextColor(WHITE);
+
+  display.clearDisplay();
+  display.setTextSize(2);
+
+  const char versionText[] = "V1.2";
+  int16_t versionWidth = strlen(versionText) * 12;
+  int16_t versionX = (SCREEN_WIDTH - versionWidth) / 2;
+  int16_t versionY = 4;
+  display.setCursor(versionX, versionY);
+  display.print(versionText);
+
+  display.setTextSize(1);
+  const char githubText[] = "github.com/jbohack";
+  int16_t githubWidth = strlen(githubText) * 6;
+  int16_t githubX = (SCREEN_WIDTH - githubWidth) / 2;
+  int16_t githubY = (SCREEN_HEIGHT - 8) / 2 + 12;
+  display.setCursor(githubX, githubY);
+  display.print(githubText);
+  
+  display.display();
+  delay(2000);
   updateDisplay();
+
   IrReceiver.begin(IR_RECEIVE_PIN);
   IrSender.begin(IR_SEND_PIN);
   pinMode(buttonPin, INPUT_PULLUP);
