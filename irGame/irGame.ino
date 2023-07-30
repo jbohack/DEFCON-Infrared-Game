@@ -28,6 +28,7 @@ int hp = 100;
 bool gameOver = false;
 int32_t lastReceiveTime = 0;
 int32_t gameOverStartTime = 0;
+int32_t wakeUpDelay = 0;
 const int32_t receiveDelay = 250;
 
 void updateDisplay() {
@@ -76,7 +77,7 @@ void setup() {
   display.clearDisplay();
   display.setTextSize(2);
 
-  const char versionText[] = "V1.4";
+  const char versionText[] = "V1.5";
   int16_t versionWidth = strlen(versionText) * 12;
   int16_t versionX = (SCREEN_WIDTH - versionWidth) / 2;
   int16_t versionY = 4;
@@ -104,10 +105,12 @@ void loop() {
   buttonState = digitalRead(buttonPin);
   if (buttonState == ACTIVATED) {
     lastReceiveTime = millis();
-    IrSender.sendNECMSB(hitCode, len);
-    int32_t delayStart = millis();
-    while (millis() - delayStart < 10) {
-      displayInvulnerable();
+    if (millis() - wakeUpDelay >= 1000) {
+      IrSender.sendNECMSB(hitCode, len);
+      int32_t delayStart = millis();
+      while (millis() - delayStart < 10) {
+        displayInvulnerable();
+      }
     }
   } else {
     if (millis() - lastReceiveTime < TIMEOUT) {
@@ -143,6 +146,7 @@ void loop() {
     display.ssd1306_command(SSD1306_DISPLAYOFF);
     set_sleep_mode(SLEEP_MODE_PWR_SAVE);
     sleep_enable();
+    wakeUpDelay = millis();
     sleep_mode();
   } else {
     display.ssd1306_command(SSD1306_DISPLAYON);
