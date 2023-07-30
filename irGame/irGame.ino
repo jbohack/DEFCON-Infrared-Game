@@ -76,7 +76,7 @@ void setup() {
   display.clearDisplay();
   display.setTextSize(2);
 
-  const char versionText[] = "V1.2";
+  const char versionText[] = "V1.3";
   int16_t versionWidth = strlen(versionText) * 12;
   int16_t versionX = (SCREEN_WIDTH - versionWidth) / 2;
   int16_t versionY = 4;
@@ -205,6 +205,7 @@ void displayGameOver() {
       gameOver = false;
       displayText = true;
       display.setTextSize(2);
+      display.ssd1306_command(SSD1306_DISPLAYON);
       updateDisplay();
       IrSender.sendNECMSB(regenCode, len);
       delay(1000);
